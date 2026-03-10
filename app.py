@@ -176,19 +176,22 @@ def main():
         unsafe_allow_html=True,
     )
 
+    # Load documents on first run (before sidebar)
+    if not st.session_state.documents_loaded:
+        load_documents()
+        st.success("✅ All privacy policies loaded successfully!")
+        st.rerun()
+
     # Sidebar
     with st.sidebar:
         st.header("Settings")
 
         # Document selector
-        if st.session_state.documents_loaded:
-            selected_doc = st.selectbox(
-                "Select Privacy Policy",
-                options=list(st.session_state.document_indices.keys()),
-                help="Choose which privacy policy to query",
-            )
-        else:
-            selected_doc = None
+        selected_doc = st.selectbox(
+            "Select Privacy Policy",
+            options=list(st.session_state.document_indices.keys()),
+            help="Choose which privacy policy to query",
+        )
 
         st.markdown("---")
 
@@ -207,11 +210,6 @@ def main():
         if st.button("🔄 Clear Chat History"):
             st.session_state.chat_history = []
             st.rerun()
-
-    # Load documents on first run
-    if not st.session_state.documents_loaded:
-        load_documents()
-        st.success("✅ All privacy policies loaded successfully!")
 
     # Main chat interface
     st.markdown("---")
